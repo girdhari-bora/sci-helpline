@@ -1,6 +1,7 @@
 library(data.table)
 library(dplyr)
 
+#change in global
 
 sci_dump1 <- read.csv("./Data/sci_dump.csv", 
                       header = TRUE, stringsAsFactors = FALSE ,check.names = TRUE)

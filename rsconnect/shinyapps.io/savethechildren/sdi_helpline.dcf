@@ -1,0 +1,11 @@
+name: sdi_helpline
+title: sdi_helpline
+account: savethechildren
+server: shinyapps.io
+appId: 209829
+bundleId: 963432
+url: https://savethechildren.shinyapps.io/sdi_helpline/
+when: 1504264412.98057
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: aR8KNkwEQo2jgFt4cESa9p.xls|.RData|sci.R|SCI Raw Data 30-Aug-2017.xlsx|serverhwc.R|servertsu.R|uihwc.R|uitsu.R|Data/.~lock.sci_dump.csv#

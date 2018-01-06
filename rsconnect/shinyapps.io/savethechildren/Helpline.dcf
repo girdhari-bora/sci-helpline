@@ -1,0 +1,13 @@
+name: Helpline
+title: Helpline
+username:
+account: savethechildren
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 209832
+bundleId: 1164470
+url: https://savethechildren.shinyapps.io/Helpline/
+when: 1515237796.53639
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: aR8KNkwEQo2jgFt4cESa9p.xls|feather_file.feather|helpline_31_Aug.csv|missing_uuid.csv|.RData|Referral_MIS.csv|sci_dump01-09.xlsx|sci_dump_01-12-2017.csv|sci_dump_06-01-2018.csv|sci_dump_adi.csv|sci_dump.csv|sci_dump_for_calls.csv|sci.R|SCI Raw Data 30-Aug-2017.xlsx|serverhwc.R|servertsu.R|Tattva Foundation1.png|Tattva Foundation2.png|uihwc.R|uitsu.R|srv/shiny-server/favicon.ico

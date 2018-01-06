@@ -1,0 +1,11 @@
+name: helpline
+title: Helpline
+account: savethechildren
+server: shinyapps.io
+appId: 209832
+bundleId: 977954
+url: https://savethechildren.shinyapps.io/Helpline/
+when: 1505205813.94036
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: aR8KNkwEQo2jgFt4cESa9p.xls|helpline_31_Aug.csv|.RData|sci_dump01-09.xlsx|sci.R|SCI Raw Data 30-Aug-2017.xlsx|serverhwc.R|servertsu.R|uihwc.R|uitsu.R

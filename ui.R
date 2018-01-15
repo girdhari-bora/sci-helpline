@@ -211,21 +211,17 @@ body <- dashboardBody (
     ),
     
     tabItem(tabName = "referral", 
-            
-           fluidRow(
-              box(collapsibleTreeOutput("dTree", width = "100%", height = "400px"), width = 12,
-                 title = "Diarrohea Referral Tree (click on the nodes to drill-down)", collapsible = TRUE, status = "success",solidHeader = TRUE)
-              # box(highchartOutput("pieCallStatus", width = "100%", height = "350px"), width = 6,collapsible = TRUE),
-              # box(highchartOutput("pieCasesStatus", width = "100%", height = "350px"), width = 6,collapsible = TRUE),
-              # box(highchartOutput("colTreatmentGiven", width = "100%", height = "350px"), width = 6,collapsible = TRUE),
-              # box(highchartOutput("histRecoveryDays", width = "100%", height = "350px"), width = 6,collapsible = TRUE),
-              # box(title = "CrossTabulation: Treatment vs Recovery Days", DT::dataTableOutput('dtCrosstab'), width = 12,collapsible = TRUE, collapsed = TRUE,
-              #     status = "success",solidHeader = TRUE)
-              
+         
+            fluidRow(
+              box(collapsibleTreeOutput("dTree", width = "100%", height = "350px"), width = 12,
+                 title = "Diarrohea Referral Tree (click on the nodes to drill-down)", collapsible = TRUE, status = "success",solidHeader = TRUE),
+              box(highchartOutput("pieCallStatus", width = "100%", height = "350px"), width = 6,collapsible = TRUE),
+              box(highchartOutput("pieCasesStatus", width = "100%", height = "350px"), width = 6,collapsible = TRUE),
+              box(highchartOutput("colTreatmentGiven", width = "100%", height = "350px"), width = 6,collapsible = TRUE),
+              box(highchartOutput("histAgeAtRecovery", width = "100%", height = "350px"), width = 6,collapsible = TRUE),
+              box(highchartOutput("scatterAgeRecovTreat", width = "100%", height = "350px"), width = 6,collapsible = TRUE)
             )
-            
-            
-    )
+      )
     
     
   )

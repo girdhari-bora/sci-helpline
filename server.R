@@ -931,14 +931,23 @@ output$histinfoSought <- renderHighchart({
     
   })  
     
-######################################REFERRAL TAB CHARTS START HERE ###########################################################################    
-  
+######################################REFERRAL TAB CHARTS START HERE ###########################################################################
+######################################REFERRAL TAB CHARTS START HERE ###########################################################################
+######################################REFERRAL TAB CHARTS START HERE ###########################################################################
+######################################REFERRAL TAB CHARTS START HERE ###########################################################################
 
 output$pieCallStatus <- renderHighchart({
   
   d_referral_cases <- inner_join(datasetInput(),d_referral_cases , by= "uuid")
   
-  hchart(d_referral_cases$ref_followup_status, type = "pie", name = "No. of callers") %>% 
+  call_recieved_data <- c(unlist(d_referral_cases$ref_followup_status_1)
+                          ,unlist(d_referral_cases$ref_followup_status_2),
+                          unlist(d_referral_cases$ref_followup_status_3),
+                          unlist(d_referral_cases$ref_followup_status_4))
+  
+  call_recieved_data <- call_recieved_data[call_recieved_data!=""]
+
+  hchart(call_recieved_data, type = "column", name = "No. of callers") %>% 
     hc_add_theme(hc_theme_smpl())%>%
     hc_legend(enabled = FALSE) %>%
     hc_title(text = paste0("Referral Follow-up Call Status",span(" (","N=",format(nrow(d_referral_cases), nsmall=0, big.mark=","),")", style="color:#e32c3e")),
@@ -953,35 +962,59 @@ output$pieCallStatus <- renderHighchart({
     #                 value = mean(as.integer(stay))))) %>%
     # 
     # hc_yAxis(title = list(text = "Number of Pregnant Women"), allowDecimals = FALSE) %>%
-    hc_plotOptions( pie = list(colors = brewer.pal(5,"Pastel1"),
+    hc_plotOptions( column = list(colors = brewer.pal(5,"Pastel1"),
                                # type = "pie",
                                name = "No. of Calls", 
                                colorByPoint = TRUE,
                                # center = c('55%', '50%'),
-                               size = 180, 
+                               size = 140, 
                                dataLabels = list(enabled = TRUE,
-                                                 format = '{point.name}: ({point.percentage:.1f}%)'
+                                                   format = '{point.y}'
+                                                 # format = '{point.name}: ({point.percentage:.1f}%)'
                                                  # {point.percentage:.1f}
                                ))) %>% 
     
     
-    hc_credits(enabled = TRUE,
-               text = "Source: SCI SDI Helpline data,2017-18",
-               href = "https://www.savethechildren.in/",
-               style = list(fontSize = "9px")) %>%
+    # hc_credits(enabled = TRUE,
+    #            text = "Source: SCI SDI Helpline data,2017-18",
+    #            href = "https://www.savethechildren.in/",
+    #            style = list(fontSize = "9px")) %>%
     hc_exporting(enabled = TRUE)
   
 
 }) 
+#######################################################################
+
 
 output$pieCasesStatus <- renderHighchart({
   
   d_referral_cases <- inner_join(datasetInput(),d_referral_cases , by= "uuid")
   
-  hchart(filter(d_referral_cases, d_referral_cases$ref_followup_status == "Received")$ref_patient_status, type = "pie", name = "No. of callers") %>% 
+  d_referral_cases <- mutate(d_referral_cases, patient_status_all 
+                             = ifelse(d_referral_cases$ref_patient_status_1 == "Don't Know" |
+                                        d_referral_cases$ref_patient_status_2 == "Don't Know" |
+                                        d_referral_cases$ref_patient_status_3 == "Don't Know" |
+                                        d_referral_cases$ref_patient_status_4 == "Don't Know","Don't Know",
+                                      
+                                      ifelse(d_referral_cases$ref_patient_status_1 == "Sick" |
+                                               d_referral_cases$ref_patient_status_2 == "Sick" |
+                                               d_referral_cases$ref_patient_status_3 == "Sick" |
+                                               d_referral_cases$ref_patient_status_4 == "Sick","Sick",
+                                             
+                                             ifelse(d_referral_cases$ref_patient_status_1 == "Death" |
+                                                      d_referral_cases$ref_patient_status_2 == "Death" |
+                                                      d_referral_cases$ref_patient_status_3 == "Death" |
+                                                      d_referral_cases$ref_patient_status_4 == "Death","Death",
+                                                    
+                                                    ifelse(d_referral_cases$ref_patient_status_1 == "Recovered" |
+                                                             d_referral_cases$ref_patient_status_2 == "Recovered" |
+                                                             d_referral_cases$ref_patient_status_3 == "Recovered" |
+                                                             d_referral_cases$ref_patient_status_4 == "Recovered","Recovered","Unreachable")))))
+  
+  hchart(d_referral_cases$patient_status_all , type = "pie") %>% 
     hc_add_theme(hc_theme_smpl())%>%
     hc_legend(enabled = FALSE) %>%
-    hc_title(text = paste0("Current Status of Referred Cases",span(" (","N=",format(nrow(filter(d_referral_cases, d_referral_cases$ref_followup_status == "Received")), nsmall=0, big.mark=","),")", style="color:#e32c3e")),
+    hc_title(text = paste0("Current Status of Referred Cases",span(" (","N=",format(nrow(d_referral_cases), nsmall=0, big.mark=","),")", style="color:#e32c3e")),
              style = list(fontWeight = "bold")) %>%
     # hc_subtitle(text = "This pie chart is based on the the recorded mode of transportation,from the hospital register") %>%
     # hc_xAxis(title = list(text = "Number of Days"),
@@ -998,12 +1031,11 @@ output$pieCasesStatus <- renderHighchart({
                                name = "No. of Calls", 
                                colorByPoint = TRUE,
                                # center = c('55%', '50%'),
-                               size = 180, 
+                               size = 150, 
                                dataLabels = list(enabled = TRUE,
                                                  format = '{point.name}: ({point.percentage:.1f}%)'
                                                  # {point.percentage:.1f}
                                ))) %>% 
-    
     
     hc_credits(enabled = TRUE,
                text = "Source: SCI SDI Helpline data,2017-18",
@@ -1014,33 +1046,24 @@ output$pieCasesStatus <- renderHighchart({
   
 }) 
 
+#######################################################################
 
 output$colTreatmentGiven <- renderHighchart({
   
   d_referral_cases <- inner_join(datasetInput(),d_referral_cases , by= "uuid")
-  treatment_list_string <- paste(filter(d_referral_cases, d_referral_cases$ref_followup_status == "Received")$treatment_given,collapse=",")
-  treatment_list_vec <- strsplit(treatment_list_string, ",")[[1]]
-  treatment_list_vec <- trimws(treatment_list_vec, which = c("both"))
-  # treatment_list_vec[treatment_list_vec == " anti diarrheal dose"] <- "Anti Diarrhoeal Dose"
-  # treatment_list_vec[treatment_list_vec == "Antibiotic" | treatment_list_vec == " Antibiotic" ] <- "Antibiotics"
-  # treatment_list_vec[treatment_list_vec ==  "ORS - Zinc" | treatment_list_vec == "ORS – Zinc"
-  #                    | treatment_list_vec == "ORS Antibiotic"| treatment_list_vec == "ORS - Antibiotic"
-  #                    | treatment_list_vec ==  " ORS - Zinc" ] <- "ORS+Zinc"
-  treatment_list_vec <- treatment_list_vec[treatment_list_vec!= ""]
   
-
- hchart(treatment_list_vec, type = "column", name = "No. of Cases") %>%
+  treatment_recieved_data <- c( unlist(d_referral_cases$treatment_given_1),
+                                unlist(d_referral_cases$treatment_given_2),
+                                unlist(d_referral_cases$treatment_given_3),
+                                unlist(d_referral_cases$treatment_given_4) )
+  
+  treatment_recieved_data <- treatment_recieved_data[treatment_recieved_data!=""]
+  
+  hchart(treatment_recieved_data, type = "column") %>%
     hc_add_theme(hc_theme_smpl())%>%
     hc_legend(enabled = FALSE) %>%
-    hc_title(text = paste0("What Treatment was Taken?",span(" (","N=",format(nrow(filter(d_referral_cases, d_referral_cases$ref_followup_status == "Received")), nsmall=0, big.mark=","),")", style="color:#e32c3e")),
+    hc_title(text = paste0("What Treatment was Taken?",span(" (","N=",format(nrow(d_referral_cases), nsmall=0, big.mark=","),")", style="color:#e32c3e")),
              style = list(fontWeight = "bold")) %>%
-
-    # hc_plotOptions(
-    #
-    #   column = list(
-    #     colorByPoint = TRUE
-    #   )
-    # ) %>%
 
     hc_plotOptions(
       column = list(colors = brewer.pal(5,"Accent"),
@@ -1048,11 +1071,10 @@ output$colTreatmentGiven <- renderHighchart({
                     name = "No. of Cases",
                     colorByPoint = TRUE,
                     # center = c('55%', '50%'),
-                    size = 170,
+                    size = 160,
                     dataLabels = list(enabled = TRUE,
                                       format = '{point.y}'
-                                      # format = '{point.name}: ({point.percentage:.1f}%)'
-                                      # {point.percentage:.1f}
+    
                     ))) %>%
     hc_credits(enabled = TRUE,
                text = "Source: SCI SDI Helpline data,2017-18",
@@ -1063,22 +1085,121 @@ output$colTreatmentGiven <- renderHighchart({
 
 
 })
-
-output$histRecoveryDays <- renderHighchart({
+#######################################################################
+output$histAgeAtRecovery <- renderHighchart({
   
-  d_referral_cases <- inner_join(datasetInput(),d_referral_cases , by= "uuid")
+  d_referral_cases1 <- inner_join(datasetInput(),d_referral_cases , by= "uuid")
   
-  t1 <- as.Date(filter(d_referral_cases, d_referral_cases$ref_patient_status == "Recovered")$ref_date, format = "%d/%m/%Y" )
-  t2 <- as.Date(filter(d_referral_cases, d_referral_cases$ref_patient_status == "Recovered")$recovery_date, format = "%d/%m/%Y" )
+  d_referral_cases1 <- filter(d_referral_cases1, d_referral_cases1$ref_patient_status_1== "Recovered" |
+                                d_referral_cases1$ref_patient_status_2== "Recovered" |
+                                d_referral_cases1$ref_patient_status_3== "Recovered" |
+                                d_referral_cases1$ref_patient_status_4== "Recovered", 
+                                d_referral_cases1$X_8_Age_of_Child !="" )
   
-
-  hchart(as.integer(t2-t1),color="#fca8c7",breaks=10)%>%
+  d_referral_cases1 <- mutate(d_referral_cases1, recovery_days 
+                              = as.integer(
+                                ifelse( d_referral_cases1$ref_patient_status_1 == "Recovered",
+                                        (as.Date(filter(d_referral_cases1, d_referral_cases1$ref_patient_status_1 == "Recovered")$recovery_date_1, format = "%d/%m/%Y" ) - 
+                                           as.Date(filter(d_referral_cases1, d_referral_cases1$ref_patient_status_1 == "Recovered")$X_3_Date_of_call , format = "%Y-%m-%d")
+                                        ),
+                                        ifelse(d_referral_cases1$ref_patient_status_2 == "Recovered",
+                                               (as.Date(filter(d_referral_cases1, d_referral_cases1$ref_patient_status_2 == "Recovered")$recovery_date_2, format = "%d/%m/%Y" ) - 
+                                                  as.Date(filter(d_referral_cases1, d_referral_cases1$ref_patient_status_2 == "Recovered")$X_3_Date_of_call , format = "%Y-%m-%d")
+                                               ),
+                                               ifelse(d_referral_cases1$ref_patient_status_3 == "Recovered",
+                                                      (as.Date(filter(d_referral_cases1, d_referral_cases1$ref_patient_status_3 == "Recovered")$recovery_date_3, format = "%d/%m/%Y" ) - 
+                                                         as.Date(filter(d_referral_cases1, d_referral_cases1$ref_patient_status_3 == "Recovered")$X_3_Date_of_call , format = "%Y-%m-%d")
+                                                      ),
+                                                      ifelse(d_referral_cases1$ref_patient_status_4 == "Recovered",
+                                                             (as.Date(filter(d_referral_cases1, d_referral_cases1$ref_patient_status_4 == "Recovered")$recovery_date_4, format = "%d/%m/%Y" ) - 
+                                                                as.Date(filter(d_referral_cases1, d_referral_cases1$ref_patient_status_4 == "Recovered")$X_3_Date_of_call , format = "%Y-%m-%d")
+                                                             ),""))))
+                              ))
+  
+  hchart(d_referral_cases1$recovery_days,color="#beffb8",breaks=15) %>%
+    
     hc_add_theme(hc_theme_smpl())%>%
     hc_legend(enabled = FALSE) %>%
-    hc_title(text = paste0("Days Taken for Recovery",span(" (","N=",format(nrow(filter(d_referral_cases, d_referral_cases$ref_patient_status == "Recovered")), nsmall=0, big.mark=","),")", style="color:#e32c3e")),
+    hc_title(text = paste0("Days Taken for Recovery",span(" (","N=",format(nrow(filter(d_referral_cases1)), nsmall=0, big.mark=","),")", style="color:#e32c3e")),
              style = list(fontWeight = "bold")) %>%
-    # hc_subtitle(text = "This histogram is based on the the recorded discharge time,from the hospital register") %>%
-    hc_xAxis(title = list(text = "Duration(in Days)"),
+    # hc_subtitle(text = "Age has been rounded down to the nearest integer.Click on legend to ON/OFF.") %>%
+    hc_xAxis(title = list(text = "Days Taken for Recovery"),
+             opposite = FALSE
+             
+    ) %>%
+    
+    hc_yAxis(title = list(text = "No. of Cases"), allowDecimals = FALSE) %>%
+    
+    hc_plotOptions( 
+      column = list(
+        colors = brewer.pal(10,"RdYlBu"),
+        # type = "pie",
+        # name = "No. of Calls", 
+        # colorByPoint = TRUE,
+        # center = c('55%', '50%'),
+        # size = 170, 
+        dataLabels = list(enabled = TRUE,
+                          format = '{point.y}'
+                          # format = '{point.name}: ({point.percentage:.1f}%)'
+                          # {point.percentage:.1f}
+        ))) %>% 
+    
+    hc_credits(enabled = TRUE,
+               text = "Source: SCI SDI Helpline data,2017-18",
+               href = "https://www.savethechildren.in/",
+               style = list(fontSize = "9px")) %>%
+    hc_exporting(enabled = TRUE)
+
+})
+
+
+#######################################################################
+
+output$scatterAgeRecovTreat <- renderHighchart({
+  
+  d_referral_cases1 <- inner_join(datasetInput(),d_referral_cases , by= "uuid")
+  
+  d_referral_cases1 <- filter(d_referral_cases1, d_referral_cases1$ref_patient_status_1== "Recovered" |
+                                d_referral_cases1$ref_patient_status_2== "Recovered" |
+                                d_referral_cases1$ref_patient_status_3== "Recovered" |
+                                d_referral_cases1$ref_patient_status_4== "Recovered", 
+                                d_referral_cases1$X_8_Age_of_Child !="" )
+  
+  d_referral_cases1 <- mutate(d_referral_cases1, recovery_days 
+                              = as.integer(
+                                ifelse( d_referral_cases1$ref_patient_status_1 == "Recovered",
+                                        (as.Date(filter(d_referral_cases1, d_referral_cases1$ref_patient_status_1 == "Recovered")$recovery_date_1, format = "%d/%m/%Y" ) - 
+                                           as.Date(filter(d_referral_cases1, d_referral_cases1$ref_patient_status_1 == "Recovered")$X_3_Date_of_call , format = "%Y-%m-%d")
+                                        ),
+                                        ifelse(d_referral_cases1$ref_patient_status_2 == "Recovered",
+                                               (as.Date(filter(d_referral_cases1, d_referral_cases1$ref_patient_status_2 == "Recovered")$recovery_date_2, format = "%d/%m/%Y" ) - 
+                                                  as.Date(filter(d_referral_cases1, d_referral_cases1$ref_patient_status_2 == "Recovered")$X_3_Date_of_call , format = "%Y-%m-%d")
+                                               ),
+                                               ifelse(d_referral_cases1$ref_patient_status_3 == "Recovered",
+                                                      (as.Date(filter(d_referral_cases1, d_referral_cases1$ref_patient_status_3 == "Recovered")$recovery_date_3, format = "%d/%m/%Y" ) - 
+                                                         as.Date(filter(d_referral_cases1, d_referral_cases1$ref_patient_status_3 == "Recovered")$X_3_Date_of_call , format = "%Y-%m-%d")
+                                                      ),
+                                                      ifelse(d_referral_cases1$ref_patient_status_4 == "Recovered",
+                                                             (as.Date(filter(d_referral_cases1, d_referral_cases1$ref_patient_status_4 == "Recovered")$recovery_date_4, format = "%d/%m/%Y" ) - 
+                                                                as.Date(filter(d_referral_cases1, d_referral_cases1$ref_patient_status_4 == "Recovered")$X_3_Date_of_call , format = "%Y-%m-%d")
+                                                             ),""))))
+                                ))
+  
+  # d_referral_cases1$X_8_Age_of_Child[d_referral_cases1$X_8_Age_of_Child == ""] <- 0
+  
+  d_referral_cases1$treatment_all <- with(d_referral_cases1, paste(treatment_given_1,treatment_given_2,
+                                                                   treatment_given_3,treatment_given_4, sep=""))
+  
+  hchart(d_referral_cases1, "scatter", hcaes(x = recovery_days , y = as.integer(X_8_Age_of_Child), group = treatment_all))%>%
+  
+  
+  # hchart(as.integer(t2-t1),color="#fca8c7",breaks=10)%>%
+    hc_add_theme(hc_theme_smpl())%>%
+    hc_legend(enabled = TRUE) %>%
+    hc_title(text = paste0("Age vs. Treatment vs. Recovery Days",span(" (","N=",format(nrow(filter(d_referral_cases1)), nsmall=0, big.mark=","),")", style="color:#e32c3e")),
+             style = list(fontWeight = "bold")) %>%
+    hc_subtitle(text = "Age has been rounded down to the nearest integer.Click on legend to ON/OFF.") %>%
+    hc_xAxis(title = list(text = "Days Taken for Recovery"),
              opposite = FALSE
              # plotLines = list(
              #   list(label = list(text = "Mean"),
@@ -1086,21 +1207,20 @@ output$histRecoveryDays <- renderHighchart({
              #        width = 1.5,
              #        value = mean(dataset$Time.of.SHH.death.LAMA.Referred..Hour)))
     ) %>%
-
-    hc_plotOptions(
-      column = list(
-        colors = brewer.pal(10,"RdYlBu"),
-        # type = "pie",
-        # name = "No. of Calls",
-        # colorByPoint = TRUE,
-        # center = c('55%', '50%'),
-        # size = 170,
-        dataLabels = list(enabled = TRUE,
-                          format = '{point.y}'
-                          # format = '{point.name}: ({point.percentage:.1f}%)'
-                          # {point.percentage:.1f}
-        ))) %>%
-    hc_yAxis(title = list(text = "Number of Cases"), allowDecimals = FALSE) %>%
+   # hc_plotOptions(
+   #     scatter = list(
+   #  #     colors = brewer.pal(10,"RdYlBu"),
+   #  #     # type = "pie",
+   #  #     # name = "No. of Calls",
+   #  #     # colorByPoint = TRUE,
+   #  #     # center = c('55%', '50%'),
+   #  #     # size = 170,
+   #      dataLabels = list(enabled = TRUE,
+   #                         format = '{point.y}'
+   #                         # format = '{point.name}: ({point.percentage:.1f}%)'
+   #                         # {point.percentage:.1f}
+   #       ))) %>%
+    hc_yAxis(title = list(text = "Age in Years"), allowDecimals = FALSE) %>%
 
     hc_credits(enabled = TRUE,
                text = "Source: SCI SDI Helpline data,2017-18",
@@ -1111,56 +1231,35 @@ output$histRecoveryDays <- renderHighchart({
 
 })
 
-output$dtCrosstab <- renderTable ({
-  
-  my_tbl = addmargins(table(one_group, another_group))
-  printed_tbl = as.data.frame.matrix(my_tbl)
-  print_tbl
-}, include.rownames=TRUE)
-
-
 
 #################################### TREE DIAGRAM ###############################################
 
 output$dTree <- renderCollapsibleTree({
   
   d_referral_cases <- inner_join(datasetInput(),d_referral_cases , by= "uuid")
+  d_referral_cases <- select(d_referral_cases,"ref_followup_status_1","ref_patient_status_1","treatment_given_1",
+                             "ref_followup_status_2","ref_patient_status_2","treatment_given_2",
+                             "ref_followup_status_3","ref_patient_status_3","treatment_given_3",
+                             "ref_followup_status_4","ref_patient_status_4","treatment_given_4")
   
-   vec <- c("ref_followup_status_1","ref_patient_status_1","treatment_given_1",
+  vec <-  c("ref_followup_status_1","ref_patient_status_1","treatment_given_1",
             "ref_followup_status_2","ref_patient_status_2","treatment_given_2",
             "ref_followup_status_3","ref_patient_status_3","treatment_given_3",
             "ref_followup_status_4","ref_patient_status_4","treatment_given_4")
-    
-   d_referral_cases %>%
-     
+  d_referral_cases %>%
       group_by_(.dots = vec) %>%
-      summarise(`Cases` = n()) %>%
+      summarise(Cases = n()) %>%
                 # ,`Percentage of Cases`= n()*100/nrow(datasetInput()) ) %>%
       collapsibleTreeSummary(
-        # hierarchy = c("Arrived from ?","Mode of Transportation used","Maternal complication at the time of arrival",
-        # "Arrival Point at DH","Maternal complication during the stay at DH","Outcome of Delivery","Outcome of Mother"),
         hierarchy =  c("ref_followup_status_1","ref_patient_status_1","treatment_given_1",
                        "ref_followup_status_2","ref_patient_status_2","treatment_given_2",
                        "ref_followup_status_3","ref_patient_status_3","treatment_given_3",
                        "ref_followup_status_4","ref_patient_status_4","treatment_given_4"),
-        # c("ref_followup_status","ref_patient_status","treatment_given"),
-        # hierarchy = input$hierarchy,
-        root = "Ref Cases",
-        width = 1200,
+        root = "Diarrohea Referral",
+        width = 800,
         attribute = "Cases",
-        # nodeSize = "Cases",
-        # zoomable = FALSE,
-        maxPercent = 50
-        # fill = c(
-        #   # The root
-        #   "seashell",
-        #   # Unique regions
-        #   rep("brown", length(unique(d_referral_cases$ref_followup_status_1))),
-        #   # Unique classes per region
-        #   rep("khaki", length(unique(paste(d_referral_cases$ref_followup_status_1,d_referral_cases$ref_patient_status_1)))),
-        #   # Unique names per region
-        #   rep("forestgreen", length(unique(paste(species$NAME, species$REGION))))
-        # )
+        zoomable = FALSE
+       
       )
    
 })

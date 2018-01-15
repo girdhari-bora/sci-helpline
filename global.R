@@ -32,24 +32,7 @@ d_referral_cases[d_referral_cases == "Don’t know" | d_referral_cases ==  "Don'
 
 d_referral_cases[is.na(d_referral_cases)] <- ""
 
-# d_referral_cases <- data.frame(sapply(d_referral_cases, gsub, pattern= "Antibioticss" , replacement= "Antibiotics"),
-#                                 stringsAsFactors = FALSE)
-# d_referral_cases <- data.frame(sapply(d_referral_cases, gsub, pattern= " Antibioticss" , replacement= "Antibiotics"),
-#                                stringsAsFactors = FALSE)
-# d_referral_cases <- data.frame(sapply(d_referral_cases, gsub, pattern= " Antibioticss " , replacement= "Antibiotics"),
-#                                stringsAsFactors = FALSE)
-# d_referral_cases[is.na(d_referral_cases)] <- ""
-
-
-# d_referral_cases$treatment_given_1 <- paste(d_referral_cases$treatment_given_1, d_referral_cases$treatment_given_not_recovered_1, sep = "")
-# d_referral_cases$treatment_given_2 <- paste(d_referral_cases$treatment_given_2, d_referral_cases$treatment_given_not_recovered_2, sep = "")
-# d_referral_cases$treatment_given_3 <- paste(d_referral_cases$treatment_given_3, d_referral_cases$treatment_given_not_recovered_3, sep = "")
-# d_referral_cases$treatment_given_4 <- paste(d_referral_cases$treatment_given_4, d_referral_cases$treatment_given_not_recovered_4, sep = "")
-
-# d_referral_cases <- data.frame(sapply(d_referral_cases, gsub, pattern= "NA", replacement= ""),
-#                                stringsAsFactors = FALSE)
-
-d_referral_cases <- data.frame(sapply(d_referral_cases, gsub, pattern=" anti diarrheal dose" , replacement= "Anti Diarrhoeal Dose"),
+d_referral_cases <- data.frame(sapply(d_referral_cases, gsub, pattern=" anti diarrheal dose" , replacement= "Other-Med."),
                              stringsAsFactors = FALSE  )
 d_referral_cases <- data.frame(sapply(d_referral_cases, gsub, pattern= " ORS - Zinc", replacement= "ORS+Zinc"),
                                stringsAsFactors = FALSE)
@@ -57,12 +40,29 @@ d_referral_cases <- data.frame(sapply(d_referral_cases, gsub, pattern= "ORS - Zi
                                stringsAsFactors = FALSE)
 d_referral_cases <- data.frame(sapply(d_referral_cases, gsub, pattern= "ORS – Zinc", replacement= "ORS+Zinc"),
                                stringsAsFactors = FALSE)
-d_referral_cases <- data.frame(sapply(d_referral_cases, gsub, pattern= "ORS - Antibiotic", replacement= "ORS-Antibiotic"),
+d_referral_cases <- data.frame(sapply(d_referral_cases, gsub, pattern= "ORS - Antibiotic", replacement= "ORS"),
                                stringsAsFactors = FALSE)
-d_referral_cases <- data.frame(sapply(d_referral_cases, gsub, pattern= "ORS Antibiotic", replacement= "ORS-Antibiotic"),
+d_referral_cases <- data.frame(sapply(d_referral_cases, gsub, pattern= "ORS Antibiotic", replacement= "ORS"),
                                stringsAsFactors = FALSE)
 
-
+d_referral_cases <- data.frame(sapply(d_referral_cases, gsub, pattern= " Antibiotic,Anti Diarrhoeal Dose" , replacement= "Other-Med."),
+                               stringsAsFactors = FALSE)
+d_referral_cases <- data.frame(sapply(d_referral_cases, gsub, pattern= "Antibiotic,Anti Diarrhoeal Dose" , replacement= "Other-Med."),
+                               stringsAsFactors = FALSE)
+d_referral_cases <- data.frame(sapply(d_referral_cases, gsub, pattern= "Antibiotic" , replacement= "Other-Med."),
+                               stringsAsFactors = FALSE)
+d_referral_cases <- data.frame(sapply(d_referral_cases, gsub, pattern= " Home made fluide.", replacement= "Home Fluid"),
+                               stringsAsFactors = FALSE)
+d_referral_cases <- data.frame(sapply(d_referral_cases, gsub, pattern= "Others,Others", replacement= "Other-Med."),
+                               stringsAsFactors = FALSE)
+d_referral_cases <- data.frame(sapply(d_referral_cases, gsub, pattern= " Zinc"  , replacement= "Zinc"),
+                               stringsAsFactors = FALSE)
+d_referral_cases <- data.frame(sapply(d_referral_cases, gsub, pattern= " Other-Med."  , replacement= "Other-Med."),
+                               stringsAsFactors = FALSE)
+d_referral_cases <- data.frame(sapply(d_referral_cases, gsub, pattern= ",Other-Med." , replacement= ""),
+                               stringsAsFactors = FALSE)
+d_referral_cases <- data.frame(sapply(d_referral_cases, gsub, pattern= "ORS,Other-Med." , replacement= "ORS"),
+                               stringsAsFactors = FALSE)
 
 
 d_referral_cases$ref_followup_status_1[d_referral_cases$ref_followup_status_1 == "Mobile switched off" | 
@@ -98,30 +98,8 @@ d_referral_cases$ref_followup_status_4[d_referral_cases$ref_followup_status_4 ==
 d_referral_cases$ref_followup_status_4[d_referral_cases$ref_followup_status_4 == "received"] <- "Received"
 
 
-d_referral_cases$ref_followup_status_1[d_referral_cases$ref_followup_status_1 == "Received"] <- "Followup-1"
-d_referral_cases$ref_followup_status_2[d_referral_cases$ref_followup_status_2 == "Received"] <- "Followup-2"
-d_referral_cases$ref_followup_status_3[d_referral_cases$ref_followup_status_3 == "Received"] <- "Followup-3"
-d_referral_cases$ref_followup_status_4[d_referral_cases$ref_followup_status_4 == "Received"] <- "Followup-4"
-
-
-
-# d_referral_cases <- data.frame(sapply(d_referral_cases, gsub, pattern= " Antibiotic" , replacement= "Antibiotics"),
-#                                stringsAsFactors = FALSE)
-# d_referral_cases <- data.frame(sapply(d_referral_cases, gsub, pattern= "Antibiotic" , replacement= "Antibiotics"),
-#                                stringsAsFactors = FALSE)
-
-
-
-
-# treatment_list_string <- paste(filter(d_referral_cases, d_referral_cases$ref_followup_status == "Received")$treatment_given,collapse=",")
-# treatment_list_vec <- strsplit(treatment_list_string, ",")[[1]]
-# # treatment_list_vec[treatment_list_vec == " anti diarrheal dose"] <- "Anti Diarrhoeal Dose"
-# # treatment_list_vec[treatment_list_vec == "Antibiotic" | treatment_list_vec == " Antibiotic" ] <- "Antibiotics"
-# # treatment_list_vec[treatment_list_vec ==  "ORS - Zinc" | treatment_list_vec == "ORS – Zinc"
-# #                    | treatment_list_vec == "ORS Antibiotic"| treatment_list_vec == "ORS - Antibiotic"
-# #                    | treatment_list_vec ==  " ORS - Zinc" ] <- "ORS+Zinc"
-# treatment_list_vec <- treatment_list_vec[treatment_list_vec!= ""]
-
-# t1 <- as.Date(filter(d_referral_cases, d_referral_cases$ref_patient_status == "Recovered")$ref_date, format = "%d/%m/%Y" )
-# t2 <- as.Date(filter(d_referral_cases, d_referral_cases$ref_patient_status == "Recovered")$recovery_date, format = "%d/%m/%Y" )
+d_referral_cases$ref_followup_status_1[d_referral_cases$ref_followup_status_1 == "Received"] <- "FOLLOW-UP(1)"
+d_referral_cases$ref_followup_status_2[d_referral_cases$ref_followup_status_2 == "Received"] <- "FOLLOW-UP(2)"
+d_referral_cases$ref_followup_status_3[d_referral_cases$ref_followup_status_3 == "Received"] <- "FOLLOW-UP(3)"
+d_referral_cases$ref_followup_status_4[d_referral_cases$ref_followup_status_4 == "Received"] <- "FOLLOW-UP(4)"
 

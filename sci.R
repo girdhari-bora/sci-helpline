@@ -527,20 +527,150 @@ month_all <- unique(as.character(sort(factor((months(as.Date(sci_dump$X_3_Date_o
 month_all <- unique(format(as.Date(sci_dump$X_3_Date_of_call) , format="%b%Y"))
 month_all
 
-filter(d_referral_cases, ref_followup_status_1 == "Followup-1", d_referral_cases$ref_patient_status_1 == ""  )
+filter(d_referral_cases, ref_followup_status_1 == "Followup-1", d_referral_cases$ref_patient_status_1 == "")
+
 table(d_referral_cases$ref_followup_status_1)
 
 
 # d_referral_cases <- inner_join(datasetInput(),d_referral_cases , by= "uuid")
 
-vec <- c("ref_followup_status_1","ref_patient_status_1","treatment_given_1",
-          "ref_followup_status_2","ref_patient_status_2","treatment_given_2",
-          "ref_followup_status_3","ref_patient_status_3","treatment_given_3",
-          "ref_followup_status_4","ref_patient_status_4","treatment_given_4")
+d_referral_cases <- inner_join(sci_dump,d_referral_cases , by= "uuid")
+d_referral_cases <- select(d_referral_cases,"ref_followup_status_1","ref_patient_status_1","treatment_given_1",
+                           "ref_followup_status_2","ref_patient_status_2","treatment_given_2",
+                           "ref_followup_status_3","ref_patient_status_3","treatment_given_3",
+                           "ref_followup_status_4","ref_patient_status_4","treatment_given_4")
 
-a <- d_referral_cases %>% 
+vec <-  c("ref_followup_status_1","ref_patient_status_1","treatment_given_1")
+          # ,
+          # "ref_followup_status_2","ref_patient_status_2","treatment_given_2",
+          # "ref_followup_status_3","ref_patient_status_3","treatment_given_3",
+          # "ref_followup_status_4","ref_patient_status_4","treatment_given_4")
+
+d_referral_cases %>%
   group_by_(.dots = vec) %>%
-    summarise(`Cases` = n())
+  summarise(Cases = n()) %>%
+  # ,`Percentage of Cases`= n()*100/nrow(datasetInput()) ) %>%
+  collapsibleTreeSummary(
+    hierarchy =  c("ref_followup_status_1","ref_patient_status_1","treatment_given_1"),
+                   # "ref_followup_status_2","ref_patient_status_2","treatment_given_2",
+                   # "ref_followup_status_3","ref_patient_status_3","treatment_given_3",
+                   # "ref_followup_status_4","ref_patient_status_4","treatment_given_4"),
+    
+    root = "Diarrohea Referral",
+    width = 800,
+    attribute = "Cases"
+    
+  )
+
+########################################################## AGE VS RECOVERY_DAYS 
+########################################################## AGE VS RECOVERY_DAYS
+
+d_referral_cases1 <- inner_join(sci_dump,d_referral_cases , by= "uuid")
+
+d_referral_cases1 <- filter(d_referral_cases1, d_referral_cases1$ref_patient_status_1== "Recovered" |
+                              d_referral_cases1$ref_patient_status_2== "Recovered" |
+                              d_referral_cases1$ref_patient_status_3== "Recovered" |
+                              d_referral_cases1$ref_patient_status_4== "Recovered")
+
+
+t1 <- as.Date(filter(d_referral_cases1, d_referral_cases1$ref_patient_status_1 == "Recovered")$X_3_Date_of_call , format = "%Y-%m-%d" )
+length(t1)
+t2 <- as.Date(filter(d_referral_cases1, d_referral_cases1$ref_patient_status_1 == "Recovered")$recovery_date_1, format = "%d/%m/%Y" )
+length(t2)
+
+d_referral_cases1 <- mutate(d_referral_cases1, recovery_days 
+      = as.integer(
+        ifelse( d_referral_cases1$ref_patient_status_1 == "Recovered",
+        (as.Date(filter(d_referral_cases1, d_referral_cases1$ref_patient_status_1 == "Recovered")$recovery_date_1, format = "%d/%m/%Y" ) - 
+                    as.Date(filter(d_referral_cases1, d_referral_cases1$ref_patient_status_1 == "Recovered")$X_3_Date_of_call , format = "%Y-%m-%d")
+                            ),
+        ifelse(d_referral_cases1$ref_patient_status_2 == "Recovered",
+        (as.Date(filter(d_referral_cases1, d_referral_cases1$ref_patient_status_2 == "Recovered")$recovery_date_2, format = "%d/%m/%Y" ) - 
+           as.Date(filter(d_referral_cases1, d_referral_cases1$ref_patient_status_2 == "Recovered")$X_3_Date_of_call , format = "%Y-%m-%d")
+        ),
+        ifelse(d_referral_cases1$ref_patient_status_3 == "Recovered",
+        (as.Date(filter(d_referral_cases1, d_referral_cases1$ref_patient_status_3 == "Recovered")$recovery_date_3, format = "%d/%m/%Y" ) - 
+           as.Date(filter(d_referral_cases1, d_referral_cases1$ref_patient_status_3 == "Recovered")$X_3_Date_of_call , format = "%Y-%m-%d")
+        ),
+        ifelse(d_referral_cases1$ref_patient_status_4 == "Recovered",
+        (as.Date(filter(d_referral_cases1, d_referral_cases1$ref_patient_status_4 == "Recovered")$recovery_date_4, format = "%d/%m/%Y" ) - 
+           as.Date(filter(d_referral_cases1, d_referral_cases1$ref_patient_status_4 == "Recovered")$X_3_Date_of_call , format = "%Y-%m-%d")
+        ),""))))
+        
+        
+        ))
+
+d_referral_cases1$X_8_Age_of_Child[d_referral_cases1$X_8_Age_of_Child == ""] <- 0
+
+d_referral_cases1$treatment_all <- with(d_referral_cases1, paste(treatment_given_1,treatment_given_2,
+                                                                 treatment_given_3,treatment_given_4, sep=""))
+
+# d_referral_cases2 <- select(d_referral_cases1,sci_dump$X_8_Age_of_Child, "ref_followup_status_1","ref_patient_status_1","treatment_given_1",
+#                            "ref_followup_status_2","ref_patient_status_2","treatment_given_2",
+#                            "ref_followup_status_3","ref_patient_status_3","treatment_given_3",
+#                            "ref_followup_status_4","ref_patient_status_4","treatment_given_4") 
+
+hchart(d_referral_cases1, "scatter", hcaes(x = recovery_days , y = as.integer(d_referral_cases1$X_8_Age_of_Child), group = treatment_all))
 
 
 
+call_recieved_data <- c(unlist(d_referral_cases$ref_followup_status_1)
+                             ,unlist(d_referral_cases$ref_followup_status_2),
+                            unlist(d_referral_cases$ref_followup_status_3),
+                            unlist(d_referral_cases$ref_followup_status_4))
+
+a <- call_recieved_data[call_recieved_data!=""]
+hchart(treatment_recieved_data, type = "pie")
+
+patient_status <- c(unlist(d_referral_cases$ref_patient_status_1)
+                        ,unlist(d_referral_cases$ref_patient_status_2),
+                        unlist(d_referral_cases$ref_patient_status_3),
+                        unlist(d_referral_cases$ref_patient_status_4))
+
+a <- patient_status[patient_status!=""]
+hchart(treatment_recieved_data, type = "column")
+
+d_referral_cases <- mutate(d_referral_cases, patient_status_all 
+                            = ifelse(d_referral_cases$ref_patient_status_1 == "Don't Know" |
+                                       d_referral_cases$ref_patient_status_2 == "Don't Know" |
+                                       d_referral_cases$ref_patient_status_3 == "Don't Know" |
+                                       d_referral_cases$ref_patient_status_4 == "Don't Know","Don't Know",
+                                     
+                                          ifelse(d_referral_cases$ref_patient_status_1 == "Sick" |
+                                                     d_referral_cases$ref_patient_status_2 == "Sick" |
+                                                     d_referral_cases$ref_patient_status_3 == "Sick" |
+                                                     d_referral_cases$ref_patient_status_4 == "Sick","Sick",
+                                                   
+                                                   ifelse(d_referral_cases$ref_patient_status_1 == "Death" |
+                                                            d_referral_cases$ref_patient_status_2 == "Death" |
+                                                            d_referral_cases$ref_patient_status_3 == "Death" |
+                                                            d_referral_cases$ref_patient_status_4 == "Death","Death",
+                                                          
+                                                          ifelse(d_referral_cases$ref_patient_status_1 == "Recovered" |
+                                                                   d_referral_cases$ref_patient_status_2 == "Recovered" |
+                                                                   d_referral_cases$ref_patient_status_3 == "Recovered" |
+                                                                   d_referral_cases$ref_patient_status_4 == "Recovered","Recovered","Unreachable")))))
+                                                   
+                                     
+                                      ifelse(d_referral_cases1$ref_patient_status_1 == "Don't Know",
+                                             ifelse(d_referral_cases1$ref_patient_status_1 == "Sick","Don't Know")
+                                             "Don't Know"),
+                                      ifelse(d_referral_cases1$ref_patient_status_1 == "Sick","Don't Know"),
+                                      
+                                      ifelse(d_referral_cases1$ref_patient_status_2 == "Recovered",
+                                             (as.Date(filter(d_referral_cases1, d_referral_cases1$ref_patient_status_2 == "Recovered")$recovery_date_2, format = "%d/%m/%Y" ) - 
+                                                as.Date(filter(d_referral_cases1, d_referral_cases1$ref_patient_status_2 == "Recovered")$X_3_Date_of_call , format = "%Y-%m-%d")
+                                             ),
+                                             ifelse(d_referral_cases1$ref_patient_status_3 == "Recovered",
+                                                    (as.Date(filter(d_referral_cases1, d_referral_cases1$ref_patient_status_3 == "Recovered")$recovery_date_3, format = "%d/%m/%Y" ) - 
+                                                       as.Date(filter(d_referral_cases1, d_referral_cases1$ref_patient_status_3 == "Recovered")$X_3_Date_of_call , format = "%Y-%m-%d")
+                                                    ),
+                                                    ifelse(d_referral_cases1$ref_patient_status_4 == "Recovered",
+                                                           (as.Date(filter(d_referral_cases1, d_referral_cases1$ref_patient_status_4 == "Recovered")$recovery_date_4, format = "%d/%m/%Y" ) - 
+                                                              as.Date(filter(d_referral_cases1, d_referral_cases1$ref_patient_status_4 == "Recovered")$X_3_Date_of_call , format = "%Y-%m-%d")
+                                                           ),""))))
+                            ))
+
+
+
+                        

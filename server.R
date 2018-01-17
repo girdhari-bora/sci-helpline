@@ -1,46 +1,8 @@
 
 library(shiny)
 library(shinydashboard)
-# library(ggplot2)
-# library(ggthemes)
-# library(scales)
-# library(magrittr)
-# library(scales)
-# library(lattice)
 library(dplyr)
 library(shiny)
-# library(leaflet)
-# library(RColorBrewer)
-# library(sp)
-# library(ggmap)
-# library(htmltools)
-# library(tidyr)
-# library(stringr)
-# library(tools)
-# library(data.table)
-# library(chron)
-# library(xlsx)
-# library("rio")
-# library(collapsibleTree)
-# library(ggplot2)
-# library(ggthemes)
-# library(scales)
-# library(dygraphs)
-# library(xts)
-# library(magrittr)
-# library(highcharter)
-# library(dplyr)
-# library(DT)
-# library(data.table)
-# library(shinyjs)
-# library(htmltools)
-# library(lubridate)
-# library(dygraphs)
-# library(tidyr)
-# require(colorspace)
-# library(lazyeval)
-# library(shinythemes)
-# library(ggvis)
 library(collapsibleTree)
 
 
@@ -80,9 +42,7 @@ datasetInput1 <- reactive({
   
   sci_dump_temp1 <- sci_dump[sci_dump$District %in% input$district,]
   return(sci_dump_temp1)
-  # return(filter(sci_dump_temp, 
-  #               as.Date(sci_dump_temp$X_3_Date_of_call) >= input$dateRange[1],
-  #               as.Date(sci_dump_temp$X_3_Date_of_call) <= input$dateRange[2]))
+  
 })
   
   
@@ -161,12 +121,7 @@ observeEvent(input$dateRange[1], {
     
     max_range_yaxis <- max(max(aa_in$Call_Nos_ib),max(aa_out$Call_Nos_ob))
     arr_dis <- cbind(x1, x2)
-    # arr_dis <- cbind(arr_dis, x0)
-    
-    # arr_dis[is.na(arr_dis)] <- ""
-    
-    
-    
+  
     dygraph(arr_dis
             # , main = "SDI Daily Helpline Calls"
             ) %>%
@@ -185,13 +140,11 @@ observeEvent(input$dateRange[1], {
                 ) %>%
       dySeries("Call_Nos_ib", label = "Inbound") %>%
       dySeries("Call_Nos_ob", label = "Outbound") %>%
-      # dySeries("Call_Nos_total", label = "Total") %>%
       dyLegend(show = "always", hideOnMouseOut = FALSE) %>%
       dyHighlight(highlightSeriesOpts = list(strokeWidth = 1.5),
                   highlightCircleSize = 5,
                   highlightSeriesBackgroundAlpha = 0.3,
                   hideOnMouseOut = FALSE)%>%
-      # dyRoller(rollPeriod = 1)%>%
       dyRangeSelector(height = 15, strokeColor = "")
     
     
@@ -200,13 +153,6 @@ observeEvent(input$dateRange[1], {
  
 #################################################################################################################    
   
-  
-  # sketch1 <- htmltools::withTags(table(
-  #   class = "display",
-  #   style = "bootstrap",
-  #   tableHeader(c("ID", colnames(get_dt())))
-  #   # tableFooter(c("", c("",0,0)))
-  # ))
   
  opts1 <- list( 
     
@@ -287,9 +233,6 @@ observeEvent(input$dateRange[1], {
       ob[i] <- filter(datasetInput(),X_1_Call_Type =="outbound", as.yearmon(datasetInput()$X_3_Date_of_call) == month_all[i])%>%
         summarise(n=n())
       
-      # ref[i] <- filter(datasetInput(),X_23_1_Case_referred_=="yes",
-      #                  X_13_Reason_of_the_call.grievance =="False",months(as.Date(datasetInput()$X_3_Date_of_call)) == month_all[i])%>%
-      #   summarise(n=n())
       ref[i] <- filter(datasetInput(),X_23_1_Case_referred_=="yes",
                        X_13_Reason_of_the_call.grievance =="False",as.yearmon(datasetInput()$X_3_Date_of_call) == month_all[i])%>%
         summarise(n=n())
@@ -311,14 +254,7 @@ output$barmonthlyCalls <- renderHighchart({
      need(length(unlist(xx[,"month_all"])) >1, "This graph needs dates across two months atleast. Intervals in the same month are not shown right now")
   )
     
-    
-    
-    # print(length(unlist(xx[,"month_all"])))
-    # print(unlist(xx[,"ib"]))
-    # print(unlist(xx[,"ob"]))
-    # print(unlist(xx[,"ref"]))
-    
-    hc <- highchart() %>% 
+  hc <- highchart() %>% 
       hc_xAxis(categories = unlist(xx[,1])
                # ,
                # title = list(text = "Month")
@@ -326,16 +262,6 @@ output$barmonthlyCalls <- renderHighchart({
       hc_add_series(name = "Inbound", data = unlist(xx[,2]), color = "fuchsia") %>% 
       hc_add_series(name = "Outbound", data = unlist(xx[,3]), color = "orange") %>% 
       hc_add_series(name = "Referral", data = unlist(xx[,4]), color = "red") %>%
-      # hc_add_series(name = "Other city",
-      #               data = (citytemp$tokyo + citytemp$london)/2)
-      
-      # hc_title(text = paste0("SDI Monthly Summary and Referrals"
-      #                        # ,
-      #                        # span(" (","N=",nrow(temp1),")", style="color:#e32c3e")
-      #                        ),
-      #          style = list(fontWeight = "bold")) %>%
-      # hc_subtitle(text = "This histogram is based on the the recorded discharge time,from the hospital register") %>%
-
       hc_plotOptions(
         column = list(
           # colors = brewer.pal(3,"RdYlBu"),
@@ -360,10 +286,7 @@ output$barmonthlyCalls <- renderHighchart({
     
       hc
       
-
-    
-    
-  })
+})
   
   
   
@@ -390,11 +313,7 @@ output$barmonthlyCalls <- renderHighchart({
       # hc_subtitle(text = "This histogram is based on the the recorded discharge time,from the hospital register") %>%
       hc_xAxis(title = list(text = "Call Time (Hours of Day)"),
                opposite = FALSE
-               # plotLines = list(
-               #   list(label = list(text = "Mean"),
-               #        color = "#F4133C",
-               #        width = 1.5,
-               #        value = mean(dataset$Time.of.SHH.death.LAMA.Referred..Hour)))
+              
       ) %>%
       
       hc_plotOptions( 
@@ -426,8 +345,7 @@ output$barmonthlyCalls <- renderHighchart({
   output$histcallStatus <- renderHighchart({
     
     sci_dump_temp <- datasetInput()
-    # sci_dump_temp <- filter(datasetInput(), X_1_Call_Type == "inbound")
-    # temp1 <- filter(sci_dump_temp,sci_dump_temp$X_4_Time_of_call !="" )
+   
     call_status <- sci_dump_temp$X_1_1_Outbound_Call_Status
     
     call_status[call_status == ""] <- "Inbound"
@@ -443,19 +361,8 @@ output$barmonthlyCalls <- renderHighchart({
       hc_legend(enabled = FALSE) %>%
       hc_title(text = paste0("Call Status (all Calls)",span(" (","N=",format(nrow(sci_dump_temp), nsmall=0, big.mark=","),")", style="color:#e32c3e")),
                style = list(fontWeight = "bold")) %>%
-      # hc_subtitle(text = "This histogram is based on the the recorded discharge time,from the hospital register") %>%
-      # hc_xAxis(title = list(text = "Call Time (Hours of Day)"),
-      #          opposite = FALSE
-      #          # plotLines = list(
-      #          #   list(label = list(text = "Mean"),
-      #          #        color = "#F4133C",
-      #          #        width = 1.5,
-      #          #        value = mean(dataset$Time.of.SHH.death.LAMA.Referred..Hour)))
-      # ) %>%
       
-      # hc_yAxis(title = list(text = "Number of Calls"), allowDecimals = FALSE) %>%
-    
-    hc_plotOptions( pie = list(colors = brewer.pal(6,"Set3"),
+      hc_plotOptions( pie = list(colors = brewer.pal(6,"Set3"),
                                # type = "pie",
                                name = "No. of Calls", 
                                colorByPoint = TRUE,
@@ -482,11 +389,7 @@ output$barmonthlyCalls <- renderHighchart({
     sci_dump_temp <- datasetInput()
     # sci_dump_temp <- filter(datasetInput(), X_1_Call_Type == "inbound")
     temp1 <- filter(sci_dump_temp,sci_dump_temp$X_2_Duration_of_Call !="" )
-    # thour <- temp1$X_2_Duration_of_Call
-    # thour <-as.integer(gsub( ":.*$", "", thour ))
-    
    
-    
     hchart(as.integer(temp1$X_2_Duration_of_Call),color="#beffb8",breaks=15)%>% 
       hc_add_theme(hc_theme_smpl())%>%
       hc_legend(enabled = FALSE) %>%
@@ -595,13 +498,7 @@ output$barmonthlyCalls <- renderHighchart({
       value[i] <- table(caller_type)[labels[i]]
 
     }
-    
-    # print(length(labels))
-    # print(labels)
-    # print(length(value))
-    # print(value)
-    
-    # hchart(caller_type, type = "pie", name = "No. of callers") %>% 
+  
     highchart() %>%  
     hc_add_theme(hc_theme_smpl())%>%
       hc_legend(enabled = FALSE) %>%
@@ -620,16 +517,8 @@ output$barmonthlyCalls <- renderHighchart({
                                                     # {point.percentage:.1f}
                                                     )) %>%
       
-      hc_plotOptions( pie = list(colors = brewer.pal(9,"Pastel1")
+    hc_plotOptions( pie = list(colors = brewer.pal(9,"Pastel1")
                                   )) %>% 
-      
-      # hc_plotOptions(pie = list(
-      #   dataLabels = list(enabled = TRUE)
-      # )) %>% 
-    # hc_plotOptions(
-    #   dataLabels = list(enabled = TRUE,
-    #                                  format = '{point.name}: {point.percentage:.1f} %')
-    #   ) %>%
     
     hc_credits(enabled = TRUE,
                  text = "Source: SCI SDI Helpline data,2017-18",
@@ -673,13 +562,6 @@ output$barmonthlyCalls <- renderHighchart({
       hc_title(text = paste0("Why calls were made?",span(" (","N=",format(nrow(temp4), nsmall=0, big.mark=","),")", style="color:#e32c3e")),
                style = list(fontWeight = "bold")) %>%
      
-      # hc_plotOptions(
-      #   
-      #   column = list(
-      #     colorByPoint = TRUE
-      #   )
-      # ) %>%
-      
       hc_plotOptions( 
             column = list(colors = brewer.pal(3,"Set3"),
                                  # type = "pie",
@@ -841,17 +723,6 @@ output$histinfoSought <- renderHighchart({
       hc_title(text = paste0("Were Diarrohea Cases Referred ?",span(" (","N=",format(nrow(temp6), nsmall=0, big.mark=","),")", style="color:#e32c3e")),
                style = list(fontWeight = "bold")) %>%
      
-      # hc_subtitle(text = "This pie chart is based on the the recorded mode of transportation,from the hospital register") %>%
-      # hc_xAxis(title = list(text = "Number of Days"),
-      #          opposite = FALSE,
-      #          plotLines = list(
-      #            list(label = list(text = "Mean"),
-      #                 color = "#F4133C",
-      #                 width = 1.5,
-      #                 value = mean(as.integer(stay))))) %>%
-      # 
-      # hc_yAxis(title = list(text = "Number of Pregnant Women"), allowDecimals = FALSE) %>%
-      
       hc_plotOptions( pie = list(colors = brewer.pal(2,"Set3"),
                                # type = "pie",
                                name = "No. of Calls", 
@@ -899,16 +770,7 @@ output$histinfoSought <- renderHighchart({
       hc_legend(enabled = FALSE) %>%
       hc_title(text = paste0("Diarrohea Cases referred To ?",span(" (","N=",format(nrow(referral_yes), nsmall=0, big.mark=","),")", style="color:#e32c3e")),
                style = list(fontWeight = "bold")) %>%
-      # hc_subtitle(text = "This pie chart is based on the the recorded mode of transportation,from the hospital register") %>%
-      # hc_xAxis(title = list(text = "Number of Days"),
-      #          opposite = FALSE,
-      #          plotLines = list(
-      #            list(label = list(text = "Mean"),
-      #                 color = "#F4133C",
-      #                 width = 1.5,
-      #                 value = mean(as.integer(stay))))) %>%
-      # 
-      # hc_yAxis(title = list(text = "Number of Pregnant Women"), allowDecimals = FALSE) %>%
+     
       hc_plotOptions( pie = list(colors = brewer.pal(5,"Pastel1"),
                                  # type = "pie",
                                  name = "No. of Calls", 
@@ -952,16 +814,7 @@ output$pieCallStatus <- renderHighchart({
     hc_legend(enabled = FALSE) %>%
     hc_title(text = paste0("Referral Follow-up Call Status",span(" (","N=",format(nrow(d_referral_cases), nsmall=0, big.mark=","),")", style="color:#e32c3e")),
              style = list(fontWeight = "bold")) %>%
-    # hc_subtitle(text = "This pie chart is based on the the recorded mode of transportation,from the hospital register") %>%
-    # hc_xAxis(title = list(text = "Number of Days"),
-    #          opposite = FALSE,
-    #          plotLines = list(
-    #            list(label = list(text = "Mean"),
-    #                 color = "#F4133C",
-    #                 width = 1.5,
-    #                 value = mean(as.integer(stay))))) %>%
-    # 
-    # hc_yAxis(title = list(text = "Number of Pregnant Women"), allowDecimals = FALSE) %>%
+   
     hc_plotOptions( column = list(colors = brewer.pal(5,"Pastel1"),
                                # type = "pie",
                                name = "No. of Calls", 

@@ -7,68 +7,18 @@
 
 library(shiny)
 library(shinydashboard)
-# library(ggplot2)
-# library(ggthemes)
-# library(scales)
-# library(magrittr)
-# library(scales)
-# library(lattice)
 library(dplyr)
-# library(shiny)
-# library(leaflet)
 library(RColorBrewer)
-# library(sp)
-# library(ggmap)
-# library(htmltools)
-# library(tidyr)
-# library(stringr)
-# library(tools)
-# library(data.table)
-# library(chron) 
-# library(xlsx)
-# library("rio")
-# library(collapsibleTree)
-# library(ggplot2)
-# library(ggthemes)
-# library(scales)
 library(dygraphs)
 library(xts)
-# library(magrittr)
 library(highcharter)
 library(dplyr)
 library(DT)
 library(data.table)
 library(shinyjs)
 library(htmltools)
-# library(lubridate)
-# library(dygraphs)
-# library(tidyr)
-# require(colorspace)
-# library(lazyeval)
-# library(shinythemes)
-# library(ggvis)
 library(apputils)
 library(collapsibleTree)
-
-# detach("package:plyr", unload=TRUE) 
-# testData <- read.csv("./Data/PrePostScienceMaths2015.csv",header = TRUE)
-# #testData4 <- read.csv("./Data/Attendance.csv",header = TRUE)
-# testData4 <- read.csv("./Data/Attendance_Consolidated1.csv",header = TRUE)
-# schoolName <- read.csv("./Data/schoolName.csv",header = TRUE)
-# #testData5 <- read.csv("./Data/PrePostHindi2015.csv",header = TRUE)
-# StudentMaster <- read.csv("./Data/StudentProfileData.csv",header = T, na.strings = c("NA",""," "))
-
-
-# css <- "
-# #large .selectize-input { line-height: 35px; }
-# #large .selectize-dropdown { line-height: 25px; }"
-
-
-
-
-
-
-
 
 #############READ DATA FILES INTO DATAFRAMES
 
@@ -86,10 +36,6 @@ library(collapsibleTree)
 #sidebar and related functions
 
 dbHeader <- dashboardHeader(title = "SDI Helpline Dashboard", titleWidth = 250,
-                            # tags$li(a(href = 'http://shinyapps.company.com',
-                            #           icon("power-off"),
-                            #           title = "Back to Apps Home"),
-                            #         class = "dropdown"),
                             tags$li(a(href = 'https://www.savethechildren.in/',
                                       img(src = 'favicon.png',
                                           title = "Save the Children Website", height = "40px"),
@@ -119,20 +65,8 @@ sidebar <- dashboardSidebar(
                         ),
                
                br(),
-               # menuItem("Referral Tree", tabName = "referralTree", icon = icon("user-md")),
-               
                menuItem("Daily Call Records", tabName = "dailyCalls", icon = icon("table")),
                br(),
-               
-               # convertMenuItem(menuItem("Referral Tree", tabName = "referralTree", icon = icon("user-md"),selected = FALSE,
-               #                          menuSubItem(text = 'Percentage or Numbers', tabName='submitFilters')),"referralTree"),
-               # 
-               # conditionalPanel("input.sidebarmenu == 'submitFilters'", #fixed
-               #                  # sliderInput("b", "Under sidebarMenu", 1, 100, 50),
-               #                  selectInput('label', 'Label Attribute', c("Number of Cases","Percentage of Cases"), multiple=FALSE, selectize=TRUE)
-               # ),
-               # 
-               # br(), 
                
                menuItem("Key Indicators (all cases)", tabName = "indicators", icon = icon("line-chart")),
                 br(),
@@ -182,13 +116,6 @@ body <- dashboardBody (
     
     tabItem(tabName = "indicators", 
             
-            #         fluidRow(
-            #           
-            #           valueBoxOutput("capsularCourses"),
-            #           valueBoxOutput("studentsServed"),
-            #           valueBoxOutput("hoursTaught")
-            #         ),
-            #         
             fluidRow(
               box(highchartOutput("histcallTime", width = "100%", height = "350px"), width = 6,collapsible = TRUE),
               box(highchartOutput("histcallStatus", width = "100%", height = "350px"), width = 6,collapsible = TRUE),
@@ -197,8 +124,6 @@ body <- dashboardBody (
               box(highchartOutput("histcallerType", width = "100%", height = "350px"), width = 6,collapsible = TRUE),
               box(highchartOutput("histcallerReason", width = "100%", height = "350px"), width = 6,collapsible = TRUE),
               
-              
-             
               box(highchartOutput("histinfoSought", width = "100%", height = "350px"), width = 6,collapsible = TRUE),
               box(highchartOutput("histinfoDiarrhea", width = "100%", height = "350px"), width = 6,collapsible = TRUE),
               
